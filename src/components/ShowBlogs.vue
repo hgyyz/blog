@@ -1,17 +1,19 @@
 <template>
+    
     <div id='show-blogs'>
-        <h1>博客总览</h1>
+        
         <input type="text" placeholder="搜索" v-model="serch" class="serchBox">
-        <!-- @click='sendSing(blog.title,blog.content,blog.categories,blog.author)' -->
-        <div v-for="(blog,index) in filblogs" class="single-blog" :key="index">
-            <router-link :to="'/blog/'+blog.id">
-                <h2 v-rainbow>{{blog.title}}</h2>
-            </router-link>
-            
-            <article>
-                {{blog.content}}
-            </article>
-            <el-button type="danger" @click="deleteBlog(blog.id)">删除</el-button>
+        <div class="wrapper">
+            <div v-for="(blog,index) in filblogs" class="single-blog" :key="index">
+                <router-link :to="'/blog/'+blog.id">
+                    <h2>{{blog.title}}</h2>
+                </router-link>
+                
+                <article v-html="blog.content">
+                    
+                </article>
+                <el-button type="danger" @click="deleteBlog(blog.id)">删除</el-button>
+            </div>
         </div>
     </div>
 </template>
@@ -33,10 +35,9 @@ export default {
             if(data.body.status==1){
                 this.$router.push('/PleaseLogin')
             }else{ 
-                this.blogs = data.body
+                this.blogs = data.body.blogs
             }
         })
-            // console.log(JSON.parse(localStorage.getItem("todos")))
     },
     computed: {
         //搜索
@@ -46,60 +47,68 @@ export default {
             })
         },
     },
-    mounted () {
-   
-    },
     methods: {  
         deleteBlog(id){
             this.submmited = true
-            axios.post('/delete',{id:id})
+            axios.post('/delete',{id:id,username:JSON.parse(localStorage.getItem('user')).username})
             .then((data)=>{
                 console.log(data.data.status)
                 if(data.data.status == 0){
                     this.blogs = this.blogs.filter( blog => blog.id !== id )
                 }else{
-                    alert('只有管理员才能删除')
+                    this.$message({
+                        type: 'error',
+                        message: '只有管理员才能删除'
+                    });
                 }
             })
         },
     },
-    watch:{
-        blogs:{
-            deep:true,
-            handler(value){
-                //深度监视，数据发生变化就往浏览器存一份，且将对象转为字符串
-                localStorage.setItem('blogs',JSON.stringify(value))
-            }
-        }
-    },
-    beforeDestroy () {
-        console.log('show被销毁了')
-    }
+    // watch:{
+    //     blogs:{
+    //         deep:true,
+    //         handler(value){
+    //             //深度监视，数据发生变化就往浏览器存一份，且将对象转为字符串
+    //             localStorage.setItem('blogs',JSON.stringify(value))
+    //         }
+    //     }
+    // },
 }
 </script>
 <style scoped>
 #show-blogs{
     max-width:800px;
+    height: 100%;
     margin:0 auto;
+    padding-top: 50px;
+}
+.wrapper{
+    max-width:780px;
+    margin:0 auto;
+    height: 85vh;
+    overflow-y: scroll;
 }
 article{
     max-width: 650px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space:nowrap; 
+    height: 20px;
 }
 .single-blog{
     padding:20px;
     margin:20px 0;
     box-sizing: border-box;
-    background-color: #eee;
+    background-color:rgba(255, 255, 255, 0.5);
     position: relative;
 }
 .single-blog:hover ::v-deep .el-button{
     display: block;
 }
 .serchBox{
-    width:780px;
+    box-sizing: border-box;
+    max-width:780px;
+    margin: 0 auto;
 }
 a{
     text-decoration: none;

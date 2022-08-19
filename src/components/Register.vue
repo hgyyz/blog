@@ -1,20 +1,21 @@
 <template>
     <div id='register'>
+        <center>注册</center>
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="用户名" prop="username">
-                <el-input type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
+            <el-form-item prop="username">
+                <el-input type="text" placeholder="用户名" v-model="ruleForm.username" autocomplete="off"></el-input>
               </el-form-item>
-            <el-form-item label="密码" prop="pass">
-              <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+            <el-form-item prop="pass">
+              <el-input placeholder="密码" type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="确认密码" prop="checkPass">
-              <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+            <el-form-item prop="checkPass">
+              <el-input placeholder="确认密码" type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="ruleForm.email"></el-input>
+            <el-form-item prop="email">
+              <el-input placeholder="邮箱" v-model="ruleForm.email"></el-input>
             </el-form-item>
-            <el-form-item label="手机号" prop="phone">
-                <el-input v-model.number="ruleForm.phone"></el-input>
+            <el-form-item prop="phone">
+                <el-input placeholder="手机号" v-model.number="ruleForm.phone"></el-input>
               </el-form-item>
               <!-- <el-form-item label="验证码" prop="captcha">
                 <el-input v-model.number="ruleForm.captcha"></el-input>
@@ -22,7 +23,7 @@
               </el-form-item> -->
             <el-form-item>
               <el-button type="primary" @click="submitForm('ruleForm')" class="b-btn">注册</el-button>
-              <el-button @click="resetForm('ruleForm')" class="b-btn">取消</el-button>
+              <el-button @click="resetForm('ruleForm')" class="b-btn">返回</el-button>
             </el-form-item>
           </el-form>
     </div>
@@ -121,54 +122,74 @@ export default {
     },
     methods: {
       submitForm(formName) {
-        axios.post('/register',{users:this.ruleForm})
-        .then((data)=>{
-          console.log(data)
-          if(data.data.status==0){
-            this.ruleForm={
-              pass: '',
-              checkPass: '',
-              email: '',
-              username:'',
-              phone:'',
-              captcha:''
-            }
-          }else{
-            alert(data.data.message)
-          }
-        })
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('注册成功!');
+            axios.post('/register',{users:this.ruleForm})
+              .then((data)=>{
+                if(data.data.status==0){
+                  this.ruleForm={
+                    pass: '',
+                    checkPass: '',
+                    email: '',
+                    username:'',
+                    phone:'',
+                    captcha:''
+                  }
+                  this.openSuccess()
+                  this.$router.push('/login')
+                }else{
+                  this.openError(data.data.message)
+                }
+              })
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+        this.$router.push('/login')
       },
+      openError(e) {
+        this.$message.error(e);
+      },
+      openSuccess() {
+        this.$message({
+          message: '注册成功',
+          type: 'success'
+        });
+      }
     },
 }
 </script>
 
 <style scoped>
 #register{
-    max-width: 500px;
+    max-width: 380px;
     margin: 0px auto;
+    margin-top: 120px;
+    background-color:rgb(255, 255, 255,0.4);
+    padding-bottom: 20px;
+    border-radius: 10px;
+}
+center{
+  font-size: 25px;
+  padding: 10px 0px;
 }
 ::v-deep .el-form-item__label{
     margin: 0px !important;
 }
 ::v-deep .el-form-item__content{
-    margin-right: 50px;
+    margin:0px 50px !important;
 }
 ::v-deep .captcha-btn{
     position: absolute;
     right: 0px;
     border:none;
     height: 40px;
+}
+::v-deep .el-button:nth-child(1){
+  background-color: green !important;
 }
 ::v-deep .b-btn{
     width: 49%;

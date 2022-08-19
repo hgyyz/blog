@@ -5,7 +5,7 @@
             <div>分类：{{blog.categories}}</div>
             <div>作者：{{blog.author}}</div>
         </div>
-        <article>{{blog.content}}</article>
+        <article v-html="blog.content"></article>
     </div>
 </template>
 
@@ -22,15 +22,18 @@ export default {
    mounted () {
         axios.post('/single',{id:this.id})
         .then((data)=>{
-            console.log(this)
             this.blog=eval('('+JSON.stringify(data.data[0])+')')
-            console.log(this.blog)
         })
    }
 }
 </script>
 
 <style scoped>
+#single-blog{
+    height: 85vh;
+    overflow:scroll;
+    padding-top: 50px;
+}
 h1{
     max-width: 1200px;
     text-align: center;
@@ -40,12 +43,12 @@ article{
     max-width: 1200px;
     margin:0 auto;
     font-size: 20px;
-    text-indent: 2em;
 }
 .info{
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .info>div:nth-child(2){
     margin-left: 20px;

@@ -3,6 +3,8 @@ import VueResource from 'vue-resource'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import router from './router'
+import cookie from 'vue-cookie'
+Vue.prototype.$cookie = cookie; 
 // 完整引入
 // 引入ElementUI组件库
 import ElementUI from 'element-ui';
@@ -23,7 +25,7 @@ Vue.directive('rainbow',{
 
 const vm = new Vue({
   beforeCreate () {
-    Vue.prototype.bus = new Vue()
+    Vue.prototype.$bus = new Vue()
   },
   el:"#app",
   render: h => h(App),

@@ -1,10 +1,11 @@
 <template>
     <div id='id'>
         <BlogHeader></BlogHeader>
+
         <!-- 是否重新挂载 -->
-        <keep-alive :include="['Login']">
+        <!-- <keep-alive :include="['Login','ShowBlogs']"> -->
             <router-view></router-view> 
-        </keep-alive> 
+        <!-- </keep-alive>  -->
         
     </div>
 </template>
@@ -13,16 +14,25 @@
     import BlogHeader from './components/BlogHeader.vue'
     export default {
     name: 'app',
+    data () {
+        return {
+        }
+    },
     components: {
         BlogHeader,
-    }
+    },
 }
 </script>
 
 <style>
 body{
     background-color: #D3B0A2;
+    background-size: 220vh 110vh;
+    /* background-image: url('../public/back.jpg'); */
+    background-repeat:no-repeat;
     font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 0;
 }   
 #add-blog *{
     box-sizing: border-box;

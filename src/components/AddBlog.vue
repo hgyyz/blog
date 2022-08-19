@@ -1,12 +1,12 @@
 <template>
     <div id='add-blog'>
-        <h2>添加博客<span class="tip">(均为必填项)</span></h2>
+        <h2>添加博客<span class="tip"></span></h2>
         <form v-if="!submmited">
             <label>博客标题</label>
             <input type="text" v-model='blog.title' required />
             <br>
             <label>博客内容</label>
-            <textarea v-model='blog.content'></textarea>
+            <textarea v-model='blog.content' wrap="hard"></textarea>
             <div id="checkboxes">
                 <label>情感</label>
                 <input type="radio" value="emotional"
@@ -21,10 +21,10 @@
                 <input type="radio" value="health"
                  v-model="blog.categories">
             </div>
-            <label>作者</label>
+            <!-- <label>作者</label>
             <select v-model="blog.author">
                 <option v-for="(author,index) in authors" :key="index">{{author}}</option>
-            </select>
+            </select> -->
             <button @click.prevent="post()">添加博客</button>
         </form>
         <div v-if="submmited">
@@ -55,9 +55,8 @@
                 title:"",
                 content:"",
                 categories:'',
-                author:' ' || []
+                author:'' 
             },
-            authors:['友易','春哥','佳成','rr'],
             submmited:false,
             tip:true
         }
@@ -65,25 +64,35 @@
     methods:{
         // https://jsonplaceholder.typicode.com/posts
         post(){
-            
             this.submmited = true
+            this.blog.content = this.blog.content.replace(/\n/g,'<br/>')
+            console.log(this.blog.content)
             axios.post('/add',this.blog)
                 .then((data)=>{
                     if(data.data.status==1){
-                        this.$router.push('/PleaseLogin')
-                    }
-                    if(data.data.status==0){
                         this.tip = false
-                        alert('发布失败，均为必填项！')
+                        this.$message({
+                        type: 'error',
+                        message: '发布失败，均为必填项',
+                        offset:80
+                    });
                     }
-                    console.log('add'+data.data.status)
                 })
         },
+    },
+    mounted(){
+        const {nickname} = JSON.parse(localStorage.getItem('user')) || {}
+        console.log(nickname)
+        this.blog.author = nickname
     }
 }
 </script>
 
 <style scoped>
+#add-blog{
+    height: 85vh;
+    overflow:scroll;
+}
 .tip{
     font-size: 14px;
     color:red;
